@@ -22,7 +22,7 @@ Yast::Tasks.configuration do |conf|
   # Desktop files are just metadata
   conf.skip_license_check << /.*desktop$/
   # The package does not live in the official YaST:Head OBS project
-  # conf.obs_project = "home:an_obs_username"
+  conf.obs_project = "home:ancorgs"
   # Default target for osc:build
-  # conf.obs_target = "openSUSE_13.2"
+  # conf.obs_target = "openSUSE_Tumbleweed"
 end
