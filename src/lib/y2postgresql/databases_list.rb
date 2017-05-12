@@ -28,9 +28,11 @@ module Y2Postgresql
 
     def_delegators :@databases, :each, :empty?, :length, :size, :last
 
-    def initialize
+    def initialize(databases = [])
       @databases = []
       @deleted = []
+
+      databases.each { |db| add(db) } if databases
     end
 
     def self.new_from_system
