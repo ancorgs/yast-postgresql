@@ -70,6 +70,9 @@ module Y2Postgresql
       )
       return unless list
 
+      # Stripping the first 3 and last 3 lines is obviously a too simplistic
+      # approach. We want to focus on the Yast::Execute (Cheetah) usage, not
+      # on parsing stuff with Ruby.
       list.lines[3..-3].each do |line|
         name, owner = line.split("|")
         name.strip!
