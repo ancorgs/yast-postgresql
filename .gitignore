@@ -1,3 +1,4 @@
 .yardoc
 *.pot
 doc
+coverage
