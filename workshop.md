@@ -78,3 +78,8 @@ For parser lets use [AugeasParser](http://www.rubydoc.info/github/config-files-a
 
 For testing it is recommend to use own FileClass that prevent modification
 of system like [MemoryFile](http://www.rubydoc.info/github/config-files-api/config_files_api/master/CFA/MemoryFile).
+
+For quick manual testing on system use `irb -I src/lib -r cfa/postgresql` as root.
+
+For attributes we can try [BaseModel#attributes](http://www.rubydoc.info/github/config-files-api/config_files_api/master/CFA/BaseModel#attributes-class_method)
+and try it to see challenge with comments in augeas subtrees.
