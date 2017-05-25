@@ -67,4 +67,14 @@ Last but not least
 
 Let's use CFA to access and modify the PostgreSQL configuration.
 
-**Josef, this is for you!!!**
+Augeas already have lense for postgresql, so lets use it.
+File location is at /var/lib/pgsql/data/postgresql.conf. But only after first attempt to start
+of postgresql server. So check it and start ( will fail ) if needed.
+
+So now we will have lense and file location, so we have everything to start with subclass of
+[base model](http://www.rubydoc.info/github/config-files-api/config_files_api/master/CFA/BaseModel).
+For parser lets use [AugeasParser](http://www.rubydoc.info/github/config-files-api/config_files_api/master/CFA/AugeasParser)
+. See example of usage here. It can give a good hint how to use it.
+
+For testing it is recommend to use own FileClass that prevent modification
+of system like [MemoryFile](http://www.rubydoc.info/github/config-files-api/config_files_api/master/CFA/MemoryFile).
