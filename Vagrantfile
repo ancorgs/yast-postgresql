@@ -26,8 +26,10 @@
 # * VAGRANT_USE_NFS: 'true' if you want to use NFS for synced folders.
 # * VAGRANT_MEMORY: set the amount of memory you want to use for the VM (default: 1024).
 #
-# If you want to add a custom provisioning script, just save it as 'provisioning/custom.sh'
-# and it will be executed automatically after 'provisioning/yast.sh'.
+# If you want to add a custom provisioning script, just save it as
+# 'provisioning/custom.sh' and it will be executed automatically after
+# 'provisioning/yast.sh'. This script will run without privileges, so you may
+# need to use 'sudo' for some commands.
 Vagrant.configure(2) do |config|
   #
   # Basic configuration
