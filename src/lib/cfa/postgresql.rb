@@ -1,5 +1,6 @@
 require "cfa/augeas_parser"
 require "cfa/base_model"
+require "cfa/matcher"
 
 module CFA
 
@@ -31,15 +32,17 @@ module CFA
     end
 
     def port
-      value("port")
+      res = value("port")
+      res.to_i if res
     end
 
     def port=(value)
-      change_value("port", value)
+      change_value("port", value.to_s)
     end
 
     def max_connections
-      value("max_connections").to_i
+      res = value("max_connections")
+      res.to_i if res
     end
 
     def max_connections=(value)
