@@ -3,29 +3,27 @@ require "cfa/base_model"
 require "cfa/matcher"
 
 module CFA
-
   # Will work if postgresql augeas lense do not use
   # subtrees for comments. Will work in future version of
   # CFA.
   class PostgresqlEasy < BaseModel
-    PARSER = AugeasParser.new("postgresql.lns")
-    PATH = "/var/lib/pgsql/data/postgresql.conf"
+    PARSER = AugeasParser.new("sysctl.lns")
+    PATH = "/var/lib/pgsql/data/postgresql.conf".freeze
 
     def initialize(file_handler: nil)
       super(PARSER, PATH, file_handler: file_handler)
     end
 
     attributes(
-      port: "port",
+      port:            "port",
       max_connections: "max_connections"
     )
   end
 
-
   # Really working example
   class Postgresql < BaseModel
     PARSER = AugeasParser.new("postgresql.lns")
-    PATH = "/var/lib/pgsql/data/postgresql.conf"
+    PATH = "/var/lib/pgsql/data/postgresql.conf".freeze
 
     def initialize(file_handler: nil)
       super(PARSER, PATH, file_handler: file_handler)
