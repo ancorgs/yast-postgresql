@@ -2,3 +2,4 @@
 *.pot
 doc
 coverage
+provisioning/custom.sh
