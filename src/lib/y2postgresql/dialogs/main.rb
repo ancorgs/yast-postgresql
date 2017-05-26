@@ -17,6 +17,9 @@
 #  you may find current contact information at www.suse.com
 
 require "yast"
+require "ui/dialog"
+require "y2postgresql"
+require "y2postgresql/dialogs/new_database"
 
 Yast.import "UI"
 Yast.import "Label"
@@ -25,73 +28,70 @@ module Y2Postgresql
   module Dialogs
     # Dialog allowing the user to configure some server settings and to
     # manage databases.
-    class Main
-      include Yast::UIShortcuts
-      include Yast::I18n
-      include Yast::Logger
-
+    class Main < UI::Dialog
       def initialize
         textdomain "postgresql"
+
+        @databases = DatabasesList.new_from_system
       end
 
-      # Displays the dialog and handles user input until the dialog is closed
-      def run
-        return unless create_dialog
+      def dialog_options
+        Opt(:defaultsize)
+      end
 
-        begin
-          return event_loop
-        ensure
-          close_dialog
-        end
+      def dialog_content
+        VBox(
+          Heading(_("Server settings")),
+          InputField(Id(:port), Opt(:hstretch), _("Port"), "5432"),
+          IntField(Id(:max_connections), _("Max number of connections"), 1, 999999, 100),
+          Heading(_("Databases")),
+          HBox(
+            databases_table,
+            VBox(
+              PushButton(Id(:add_database), _("Add")),
+              PushButton(Id(:del_database), _("Delete"))
+            )
+          ),
+          VSpacing(1),
+          footer
+        )
+      end
+
+      def accept_handler
+        @databases.write_to_system
+        finish_dialog
+      end
+
+      def add_database_handler
+        database = NewDatabase.run
+        @databases.add(database) if database
+        redraw_table
+      end
+
+      def del_database_handler
+        name = Yast::UI.QueryWidget(Id(:databases_table), :CurrentItem)
+        @databases.delete(name)
+        redraw_table
       end
 
     private
-
-      # Simple event loop
-      def event_loop
-        loop do
-          input = Yast::UI.UserInput
-          # Break the loop
-          break if input == :cancel
-
-          log.warn "Unexpected input #{input}"
-        end
-      end
-
-      def close_dialog
-        Yast::UI.CloseDialog
-      end
-
-      def create_dialog
-        Yast::UI.OpenDialog(
-          Opt(:defaultsize),
-          VBox(
-            Heading(_("Server settings")),
-            InputField(Id(:port), Opt(:hstretch), _("Port"), "5432"),
-            IntField(Id(:max_connections), _("Max number of connections"), 1, 999999, 100),
-            Heading(_("Databases")),
-            HBox(
-              databases_table,
-              VBox(
-                PushButton(Id(:add_database), _("Add")),
-                PushButton(Id(:del_database), _("Delete"))
-              )
-            ),
-            VSpacing(1),
-            footer
-          )
-        )
-      end
 
       def databases_table
         Table(
           Id(:databases_table),
           Header(_("Name"), _("Owner")),
-          [
-            Item(Id(:db1), "Database 1", "postgres"),
-            Item(Id(:db2), "Database 2", "postgres")
-          ]
+          database_items
         )
+      end
+
+      def database_items
+        @databases.map do |db|
+          Item(Id(db.name), db.name, db.owner)
+        end
+      end
+
+      def redraw_table
+        Yast::UI.ChangeWidget(Id(:databases_table), :Items, database_items)
       end
 
       def footer

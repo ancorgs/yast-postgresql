@@ -25,6 +25,7 @@ module Y2Postgresql
   class DatabasesList
     include Enumerable
     extend Forwardable
+    include Yast::Logger
 
     def_delegators :@databases, :each, :empty?, :length, :size, :last
 
@@ -75,6 +76,10 @@ module Y2Postgresql
         next if name.empty?
         add(Database.new(name, owner.strip, exists: true))
       end
+    end
+
+    def write_to_system
+      log.error "Not implemented yet"
     end
   end
 end
