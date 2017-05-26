@@ -38,7 +38,9 @@ module Y2Postgresql
     # @return [DatabasesList] list containing a database object for each
     #   database in the system
     def self.new_from_system
-      new
+      list = new
+      list.read
+      list
     end
 
     # Adds a given database to the list
@@ -55,6 +57,24 @@ module Y2Postgresql
     # @param [String] name of the database to delete
     def delete(name)
       @databases.delete_if { |db| db.name == name }
+    end
+
+    # Adds an entry to the list for every database in the local PostgreSQL system
+    def read
+      list = Yast::Execute.on_target(
+        "sudo", "-u", "postgres", "/usr/bin/psql", "--list", stdout: :capture
+      )
+      return unless list
+
+      # Stripping the first 3 and last 3 lines is obviously a too simplistic
+      # approach. We want to focus on the Yast::Execute (Cheetah) usage, not
+      # on parsing stuff with Ruby.
+      list.lines[3..-3].each do |line|
+        name, owner = line.split("|")
+        name.strip!
+        next if name.empty?
+        add(Database.new(name, owner.strip, exists: true))
+      end
     end
   end
 end

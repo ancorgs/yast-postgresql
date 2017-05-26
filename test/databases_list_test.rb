@@ -59,6 +59,12 @@ describe Y2Postgresql::DatabasesList do
   end
 
   describe ".new_from_system" do
+    before do
+      allow(Yast::Execute).to receive(:on_target)
+        .with(any_args, "/usr/bin/psql", "--list", stdout: :capture)
+        .and_return psql_output
+    end
+
     subject(:list) { described_class.new_from_system }
 
     let(:psql_output) do
@@ -76,15 +82,22 @@ describe Y2Postgresql::DatabasesList do
     end
 
     it "returns a populated list" do
-      skip "left as an exercise"
+      expect(list).to be_a Y2Postgresql::DatabasesList
+      expect(list).to_not be_empty
     end
 
     it "creates a database object for each database returned by 'psql --list'" do
-      skip "left as an exercise"
+      expect(list).to all be_a(Y2Postgresql::Database)
+      expect(list).to contain_exactly(
+        an_object_having_attributes(name: "db1", owner: "user1"),
+        an_object_having_attributes(name: "db2", owner: "user2"),
+        an_object_having_attributes(name: "postgres", owner: "postgres"),
+        an_object_having_attributes(name: "template0", owner: "postgres")
+      )
     end
 
     it "sets #exists? to true for all the created database objects" do
-      skip "left as an exercise"
+      expect(list.map(&:exists?)).to all eq true
     end
 
     context "if the psql output displays databases in multiple lines" do
@@ -105,7 +118,11 @@ describe Y2Postgresql::DatabasesList do
       end
 
       it "handles the situation properly" do
-        skip "left as an exercise"
+        expect(list).to contain_exactly(
+          an_object_having_attributes(name: "postgres", owner: "postgres"),
+          an_object_having_attributes(name: "template0", owner: "postgres"),
+          an_object_having_attributes(name: "template1", owner: "postgres")
+        )
       end
     end
   end
