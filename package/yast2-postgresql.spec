@@ -58,6 +58,7 @@ rake install DESTDIR="%{buildroot}"
 %files
 %defattr(-,root,root)
 %{yast_dir}/clients/*.rb
+%{yast_dir}/lib/cfa
 %{yast_dir}/lib/y2postgresql
 %{yast_dir}/lib/y2postgresql.rb
 %{yast_desktopdir}/postgresql.desktop
