@@ -52,7 +52,7 @@ module Y2Postgresql
     #
     # @param [String] name of the database to delete
     def delete(name)
-      @database.delete_if { |db| db.name == name }
+      @databases.delete_if { |db| db.name == name }
     end
   end
 end
