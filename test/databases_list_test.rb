@@ -50,7 +50,6 @@ describe Y2Postgresql::DatabasesList do
         let(:name2) { "name" }
 
         it "discards the duplicates" do
-          skip "Not implemented yet"
           expect(list).to be_a described_class
           expect(list.size).to eq 1
           expect([database1, database2]).to include list.first
@@ -121,7 +120,6 @@ describe Y2Postgresql::DatabasesList do
       let(:new_name) { "name1" }
 
       it "does nothing" do
-        skip "Not implemented yet"
         list.add(new_database)
         expect(list).to contain_exactly(initial_database)
       end

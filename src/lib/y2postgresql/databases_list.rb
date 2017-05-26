@@ -29,7 +29,8 @@ module Y2Postgresql
     def_delegators :@databases, :each, :empty?, :length, :size, :last
 
     def initialize(databases = [])
-      @databases = databases.dup
+      @databases = []
+      databases.each { |db| add(db) } if databases
     end
 
     # Reads the system databases into a new list
@@ -44,6 +45,7 @@ module Y2Postgresql
     #
     # @param database [Database]
     def add(database)
+      return if @databases.any? { |db| db.name == database.name }
       @databases << database
       database
     end
