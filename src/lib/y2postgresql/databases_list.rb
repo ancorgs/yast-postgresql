@@ -31,6 +31,8 @@ module Y2Postgresql
 
     def initialize(databases = [])
       @databases = []
+      @deleted = []
+
       databases.each { |db| add(db) } if databases
     end
 
@@ -57,7 +59,12 @@ module Y2Postgresql
     #
     # @param [String] name of the database to delete
     def delete(name)
-      @databases.delete_if { |db| db.name == name }
+      database = @databases.detect { |db| db.name == name }
+      return nil unless database
+
+      @databases.delete(database)
+      @deleted << database if database.exists?
+      database
     end
 
     # Adds an entry to the list for every database in the local PostgreSQL system
@@ -78,8 +85,13 @@ module Y2Postgresql
       end
     end
 
+    # Updates the databases on the system based on the information in the list
     def write_to_system
-      log.error "Not implemented yet"
+      @deleted.each(&:dropdb)
+
+      @databases.each do |db|
+        db.createdb unless db.exists?
+      end
     end
   end
 end
