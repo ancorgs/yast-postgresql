@@ -36,10 +36,14 @@ module Y2Postgresql
 
     # Creates the database in the local PostgreSQL system
     def createdb
+      run_as_postgres("/usr/bin/createdb", name, "-O", owner) unless exists?
+      @exists = true
     end
 
     # Removes the database from the local PostgreSQL system
     def dropdb
+      run_as_postgres("/usr/bin/dropdb", name) if exists?
+      @exists = false
     end
 
     # Whether the database exists already in the system
@@ -47,6 +51,12 @@ module Y2Postgresql
     # @return [Boolean]
     def exists?
       @exists
+    end
+
+  private
+
+    def run_as_postgres(*cmd_parts)
+      Yast::Execute.on_target("sudo", "-u", "postgres", *cmd_parts)
     end
   end
 end
